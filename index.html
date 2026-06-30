@@ -224,17 +224,23 @@
     padding-top:.4rem;
   }
 
-  .donut{
+  /* ---- spine dot unique et fixe ---- */
+  .spine-dot-fixed{
+    position:fixed;
+    left:calc(50% - 15px);
+    top:50vh;
     width:30px; height:30px;
     border-radius:50%;
-    border: 8px solid var(--ring-color, var(--magenta));
+    border:8px solid var(--magenta);
     background:var(--cream);
-    position:relative;
-    z-index:3;
+    z-index:200;
     box-shadow:0 0 0 6px var(--cream);
-    transition:transform .35s ease;
+    transition:border-color .4s ease;
+    pointer-events:none;
   }
-  .entry.in-view .donut{ transform:scale(1.08); }
+  @media(max-width:780px){
+    .spine-dot-fixed{ left:13px; } /* centre sur rail gauche à 28px */
+  }
 
   .card-col{ grid-column:1; }
   .entry.right .card-col.left-slot{ visibility:hidden; }
@@ -409,6 +415,8 @@
   <svg viewBox="0 0 1200 24" preserveAspectRatio="none"><path d="M0 12 C 50 0, 100 24, 150 12 S 250 0, 300 12 S 400 24, 450 12 S 550 0, 600 12 S 700 24, 750 12 S 850 0, 900 12 S 1000 24, 1050 12 S 1150 0, 1200 12 L1200 24 L0 24 Z" fill="#1B3A53" opacity="0.08"/></svg>
 </div>
 
+<div id="spine-dot" class="spine-dot-fixed"></div>
+
 <main class="timeline-wrap" id="timeline">
   <div class="spine"></div>
   <div class="spine-end"></div>
@@ -535,9 +543,10 @@ function buildTimeline(PROJECTS){
     const entry = document.createElement('div');
     entry.className = `entry ${side}`;
     entry.style.setProperty('--i', Math.min(i, 8));
+    entry.dataset.color = color;
     entry.innerHTML = `
       <div class="card-col left-slot">${side === 'left' ? card : ''}</div>
-      <div class="marker-col"><div class="donut" style="--ring-color:${color}"></div></div>
+      <div class="marker-col"></div>
       <div class="card-col right-slot">${side === 'right' ? card : ''}</div>
     `;
     wrap.appendChild(entry);
@@ -556,10 +565,24 @@ function buildTimeline(PROJECTS){
 
   document.querySelectorAll('.entry').forEach((el, i) => {
     io.observe(el);
-    // fallback staggered reveal — sticky elements sometimes fool
-    // IntersectionObserver; this guarantees visibility regardless
     setTimeout(()=> el.classList.add('in-view'), 120 + i * 80);
   });
+
+  // Point fixe sur la colonne — change de couleur selon la carte active
+  const spineDot = document.getElementById('spine-dot');
+  function updateSpineDot(){
+    const allEntries = document.querySelectorAll('.entry');
+    const mid = window.innerHeight / 2;
+    let closest = null, closestDist = Infinity;
+    allEntries.forEach(el => {
+      const rect = el.getBoundingClientRect();
+      const dist = Math.abs((rect.top + rect.height / 2) - mid);
+      if(dist < closestDist){ closestDist = dist; closest = el; }
+    });
+    if(closest){ spineDot.style.borderColor = closest.dataset.color || '#E91368'; }
+  }
+  window.addEventListener('scroll', updateSpineDot, { passive:true });
+  updateSpineDot();
 })();
 </script>
 
