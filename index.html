@@ -196,13 +196,8 @@
     gap:0 1.5rem;
     margin-bottom:7rem;
     opacity:0;
-    transform:translateY(28px);
-    transition:opacity .7s ease, transform .7s ease;
-
-    /* parallax stack: each entry sticks a little lower than the
-       previous one, so as you keep scrolling the next card rises
-       up and settles just below/behind the one before it along
-       the spine. --i is set inline by JS. */
+    transform:translateY(32px);
+    transition:opacity .65s ease, transform .65s ease;
     position:sticky;
     top: calc(96px + (var(--i, 0) * 16px));
     z-index: calc(var(--i, 0) + 1);
@@ -558,9 +553,14 @@ function buildTimeline(PROJECTS){
     entries.forEach(e=>{
       if(e.isIntersecting){ e.target.classList.add('in-view'); }
     });
-  }, { threshold:.18 });
+  }, { threshold: 0, rootMargin: '0px 0px -40px 0px' });
 
-  document.querySelectorAll('.entry').forEach(el => io.observe(el));
+  document.querySelectorAll('.entry').forEach((el, i) => {
+    io.observe(el);
+    // fallback staggered reveal — sticky elements sometimes fool
+    // IntersectionObserver; this guarantees visibility regardless
+    setTimeout(()=> el.classList.add('in-view'), 120 + i * 80);
+  });
 })();
 </script>
 
