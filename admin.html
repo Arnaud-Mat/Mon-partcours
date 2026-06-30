@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Édition timeline — privé</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Work+Sans:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#FAF6EC; --navy:#1B3A53;
+    --magenta:#E91368; --orange:#F2941B; --blue:#3E86D6; --green:#79B928; --yellow:#F0C419;
+    --font-display:'Fredoka', sans-serif; --font-body:'Work Sans', sans-serif; --font-mono:'Space Mono', monospace;
+  }
+  *{box-sizing:border-box;}
+  body{ margin:0; background:var(--cream); color:var(--navy); font-family:var(--font-body); padding:2rem 1.25rem 6rem; }
+  h1{ font-family:var(--font-display); font-weight:600; font-size:1.6rem; margin-bottom:.3rem; }
+  .sub{ color:#5b7388; font-size:.9rem; margin-bottom:2rem; max-width:46rem; }
+  fieldset{ border:2px solid var(--navy); border-radius:14px; padding:1rem 1.2rem 1.3rem; margin-bottom:1.5rem; max-width:46rem; background:#fff; }
+  legend{ font-family:var(--font-mono); text-transform:uppercase; font-size:.72rem; letter-spacing:.08em; padding:0 .5rem; }
+  label{ display:block; font-size:.78rem; font-family:var(--font-mono); text-transform:uppercase; letter-spacing:.05em; margin:.7rem 0 .25rem; color:#324b5e; }
+  input[type=text], input[type=password], input[type=date], select, textarea{
+    width:100%; padding:.55rem .7rem; border:1.5px solid #b9c6d2; border-radius:8px; font-family:var(--font-body); font-size:.92rem; background:#fcfbf6;
+  }
+  textarea{ min-height:4.2rem; resize:vertical; }
+  .row{ display:flex; gap:.8rem; flex-wrap:wrap; }
+  .row > div{ flex:1; min-width:160px; }
+  button{
+    font-family:var(--font-mono); text-transform:uppercase; letter-spacing:.06em; font-size:.78rem;
+    border:none; border-radius:999px; padding:.6rem 1.1rem; cursor:pointer; margin-top:1rem; margin-right:.6rem;
+  }
+  .btn-primary{ background:var(--navy); color:var(--cream); }
+  .btn-primary:hover{ background:var(--magenta); }
+  .btn-ghost{ background:transparent; border:1.5px solid var(--navy); color:var(--navy); }
+  .btn-danger{ background:transparent; border:1.5px solid var(--magenta); color:var(--magenta); }
+  .btn-danger:hover{ background:var(--magenta); color:#fff; }
+  .status{ font-family:var(--font-mono); font-size:.82rem; margin:1rem 0; padding:.7rem 1rem; border-radius:10px; max-width:46rem; }
+  .status.ok{ background:#e6f3dc; border:1.5px solid var(--green); }
+  .status.err{ background:#fbe2e8; border:1.5px solid var(--magenta); }
+  .status.info{ background:#eaf1fa; border:1.5px solid var(--blue); }
+  .project-card{ background:#fff; border:2px solid var(--navy); border-radius:14px; padding:1rem 1.2rem; margin-bottom:1rem; max-width:46rem; }
+  .project-card h3{ font-family:var(--font-display); font-size:1.05rem; margin:0 0 .2rem; }
+  .project-card .meta{ font-family:var(--font-mono); font-size:.72rem; color:#5b7388; margin-bottom:.6rem; }
+  .gate{ max-width:30rem; margin:8vh auto; text-align:center; }
+  .gate input{ text-align:center; }
+  .hidden{ display:none !important; }
+  .help{ font-size:.78rem; color:#5b7388; line-height:1.5; margin-top:.4rem; }
+  .top-actions{ position:sticky; top:0; background:var(--cream); padding:1rem 0; z-index:5; max-width:46rem; }
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     COUCHE 1 — verrou local (dissuasif, PAS une vraie sécurité).
+     N'importe qui regardant le code source peut la contourner.
+     La VRAIE protection, c'est ton token GitHub plus bas : sans
+     lui, impossible de publier quoi que ce soit sur ton repo.
+     Change LOCK_PASSPHRASE si tu veux changer ce verrou local.
+     ============================================================ -->
+<div id="gate" class="gate">
+  <h1>Espace privé</h1>
+  <p class="sub">Cette page sert à modifier la timeline de ton site. Elle n'est volontairement liée nulle part publiquement.</p>
+  <label for="gate-pass">Code d'accès local</label>
+  <input type="password" id="gate-pass" placeholder="••••••••">
+  <button class="btn-primary" id="gate-btn">Entrer</button>
+  <p class="help">Ceci ne bloque qu'un visiteur occasionnel. La vraie sécurité vient ensuite, avec ton token GitHub personnel que toi seul possèdes.</p>
+</div>
+
+<div id="app" class="hidden">
+
+  <h1>Édition de la timeline</h1>
+  <p class="sub">Les modifications sont publiées directement sur <code>data/projects.json</code> dans ton repo GitHub. Ton token n'est jamais envoyé ailleurs qu'à l'API GitHub, et n'est conservé que pour la durée de cet onglet (sessionStorage, effacé à la fermeture).</p>
+
+  <fieldset>
+    <legend>Connexion GitHub</legend>
+    <div class="row">
+      <div>
+        <label for="gh-owner">Utilisateur / organisation</label>
+        <input type="text" id="gh-owner" placeholder="ex: arnaudmathier">
+      </div>
+      <div>
+        <label for="gh-repo">Nom du repo</label>
+        <input type="text" id="gh-repo" placeholder="ex: mon-portfolio">
+      </div>
+    </div>
+    <div class="row">
+      <div>
+        <label for="gh-branch">Branche</label>
+        <input type="text" id="gh-branch" value="main">
+      </div>
+      <div>
+        <label for="gh-path">Chemin du fichier</label>
+        <input type="text" id="gh-path" value="data/projects.json">
+      </div>
+    </div>
+    <label for="gh-token">Token d'accès personnel GitHub (fine-grained, droit "Contents: Read & write" sur ce repo uniquement)</label>
+    <input type="password" id="gh-token" placeholder="github_pat_...">
+    <p class="help">
+      Crée-le sur github.com → Settings → Developer settings → Fine-grained tokens.
+      Limite-le à ce seul repo et au scope "Contents: Read and write". Ne le partage jamais, ne le colle nulle part ailleurs.
+    </p>
+    <button class="btn-primary" id="load-btn">Charger les projets</button>
+    <span id="load-status"></span>
+  </fieldset>
+
+  <div id="status-zone"></div>
+
+  <div id="editor" class="hidden">
+    <div class="top-actions">
+      <button class="btn-primary" id="add-btn">+ Nouveau projet</button>
+      <button class="btn-ghost" id="publish-btn">Publier sur GitHub</button>
+    </div>
+    <div id="list"></div>
+  </div>
+
+</div>
+
+<template id="project-template">
+  <fieldset class="project-fieldset">
+    <legend>Projet</legend>
+    <div class="row">
+      <div>
+        <label>Date de tri (AAAA-MM)</label>
+        <input type="text" class="f-date" placeholder="2025-09">
+      </div>
+      <div>
+        <label>Date affichée</label>
+        <input type="text" class="f-dateLabel" placeholder="Depuis sept. 2025">
+      </div>
+    </div>
+    <label>Titre</label>
+    <input type="text" class="f-title">
+    <label>Client / contexte</label>
+    <input type="text" class="f-client">
+    <label>Catégorie</label>
+    <select class="f-category">
+      <option value="branding">Branding</option>
+      <option value="video">Vidéo</option>
+      <option value="dev">Dev / No-code</option>
+      <option value="growth">Growth / Outreach</option>
+    </select>
+    <label>Description</label>
+    <textarea class="f-description"></textarea>
+    <label>Photos (une URL par ligne)</label>
+    <textarea class="f-photos"></textarea>
+    <label>Lien du projet</label>
+    <input type="text" class="f-link" placeholder="https://...">
+    <button class="btn-danger f-delete">Supprimer ce projet</button>
+  </fieldset>
+</template>
+
+<script>
+const LOCK_PASSPHRASE = "montreux"; // change-moi si tu veux
+
+document.getElementById('gate-btn').addEventListener('click', ()=>{
+  const val = document.getElementById('gate-pass').value;
+  if(val === LOCK_PASSPHRASE){
+    document.getElementById('gate').classList.add('hidden');
+    document.getElementById('app').classList.remove('hidden');
+  }else{
+    alert("Code incorrect.");
+  }
+});
+document.getElementById('gate-pass').addEventListener('keydown', e=>{
+  if(e.key === 'Enter') document.getElementById('gate-btn').click();
+});
+
+/* ---- persist connection fields (not the token) across reloads ---- */
+['gh-owner','gh-repo','gh-branch','gh-path'].forEach(id=>{
+  const el = document.getElementById(id);
+  const saved = localStorage.getItem('tl-'+id);
+  if(saved) el.value = saved;
+  el.addEventListener('change', ()=> localStorage.setItem('tl-'+id, el.value));
+});
+// token only ever lives in sessionStorage (cleared when tab closes)
+const tokenEl = document.getElementById('gh-token');
+const savedToken = sessionStorage.getItem('tl-token');
+if(savedToken) tokenEl.value = savedToken;
+tokenEl.addEventListener('change', ()=> sessionStorage.setItem('tl-token', tokenEl.value));
+
+let currentSha = null;
+let projects = [];
+
+function ghConfig(){
+  return {
+    owner: document.getElementById('gh-owner').value.trim(),
+    repo: document.getElementById('gh-repo').value.trim(),
+    branch: document.getElementById('gh-branch').value.trim() || 'main',
+    path: document.getElementById('gh-path').value.trim() || 'data/projects.json',
+    token: document.getElementById('gh-token').value.trim()
+  };
+}
+
+function showStatus(msg, type){
+  const zone = document.getElementById('status-zone');
+  zone.innerHTML = `<div class="status ${type}">${msg}</div>`;
+}
+
+function b64ToUtf8(b64){
+  return decodeURIComponent(escape(atob(b64.replace(/\n/g,''))));
+}
+function utf8ToB64(str){
+  return btoa(unescape(encodeURIComponent(str)));
+}
+
+async function loadFromGitHub(){
+  const cfg = ghConfig();
+  if(!cfg.owner || !cfg.repo || !cfg.token){
+    showStatus("Renseigne au minimum l'utilisateur, le repo et le token.", 'err');
+    return;
+  }
+  showStatus("Chargement…", 'info');
+  try{
+    const url = `https://api.github.com/repos/${cfg.owner}/${cfg.repo}/contents/${cfg.path}?ref=${cfg.branch}`;
+    const res = await fetch(url, {
+      headers: {
+        'Authorization': `Bearer ${cfg.token}`,
+        'Accept': 'application/vnd.github+json'
+      }
+    });
+    if(res.status === 404){
+      // file doesn't exist yet — start empty, will be created on publish
+      currentSha = null;
+      projects = [];
+      showStatus("Fichier introuvable sur GitHub — il sera créé au moment de la publication.", 'info');
+      renderList();
+      document.getElementById('editor').classList.remove('hidden');
+      return;
+    }
+    if(!res.ok){
+      const body = await res.text();
+      throw new Error(`${res.status} ${res.statusText} — ${body}`);
+    }
+    const data = await res.json();
+    currentSha = data.sha;
+    projects = JSON.parse(b64ToUtf8(data.content));
+    showStatus(`${projects.length} projet(s) chargé(s) depuis GitHub.`, 'ok');
+    renderList();
+    document.getElementById('editor').classList.remove('hidden');
+  }catch(err){
+    console.error(err);
+    showStatus("Erreur de chargement : " + err.message, 'err');
+  }
+}
+
+function renderList(){
+  const list = document.getElementById('list');
+  list.innerHTML = '';
+  projects
+    .slice()
+    .sort((a,b)=> (b.date||'').localeCompare(a.date||''))
+    .forEach(p => list.appendChild(renderCard(p)));
+}
+
+function renderCard(p){
+  const tpl = document.getElementById('project-template').content.cloneNode(true);
+  const fieldset = tpl.querySelector('.project-fieldset');
+  fieldset.dataset.id = p._id || (p._id = crypto.randomUUID());
+
+  fieldset.querySelector('.f-date').value = p.date || '';
+  fieldset.querySelector('.f-dateLabel').value = p.dateLabel || '';
+  fieldset.querySelector('.f-title').value = p.title || '';
+  fieldset.querySelector('.f-client').value = p.client || '';
+  fieldset.querySelector('.f-category').value = p.category || 'dev';
+  fieldset.querySelector('.f-description').value = p.description || '';
+  fieldset.querySelector('.f-photos').value = (p.photos || []).join('\n');
+  fieldset.querySelector('.f-link').value = p.link || '';
+
+  fieldset.querySelector('.f-delete').addEventListener('click', ()=>{
+    if(confirm(`Supprimer "${p.title || 'ce projet'}" ?`)){
+      projects = projects.filter(x => x._id !== p._id);
+      renderList();
+    }
+  });
+
+  return fieldset;
+}
+
+function collectFromDOM(){
+  const fieldsets = document.querySelectorAll('.project-fieldset');
+  projects = Array.from(fieldsets).map(fs => ({
+    _id: fs.dataset.id,
+    date: fs.querySelector('.f-date').value.trim(),
+    dateLabel: fs.querySelector('.f-dateLabel').value.trim(),
+    title: fs.querySelector('.f-title').value.trim(),
+    client: fs.querySelector('.f-client').value.trim(),
+    category: fs.querySelector('.f-category').value,
+    description: fs.querySelector('.f-description').value.trim(),
+    photos: fs.querySelector('.f-photos').value.split('\n').map(s=>s.trim()).filter(Boolean),
+    link: fs.querySelector('.f-link').value.trim()
+  }));
+}
+
+document.getElementById('add-btn').addEventListener('click', ()=>{
+  collectFromDOM();
+  const blank = { date:'', dateLabel:'', title:'Nouveau projet', client:'', category:'dev', description:'', photos:[], link:'', _id: crypto.randomUUID() };
+  projects.push(blank);
+  renderList();
+  document.getElementById('list').lastElementChild?.scrollIntoView({behavior:'smooth', block:'center'});
+});
+
+document.getElementById('load-btn').addEventListener('click', loadFromGitHub);
+
+document.getElementById('publish-btn').addEventListener('click', async ()=>{
+  collectFromDOM();
+  const cfg = ghConfig();
+  if(!cfg.owner || !cfg.repo || !cfg.token){
+    showStatus("Renseigne au minimum l'utilisateur, le repo et le token.", 'err');
+    return;
+  }
+  const cleanProjects = projects.map(({_id, ...rest}) => rest);
+  const missingDates = cleanProjects.some(p => !p.date);
+  if(missingDates && !confirm("Au moins un projet n'a pas de date de tri (AAAA-MM). Publier quand même ?")){
+    return;
+  }
+  showStatus("Publication en cours…", 'info');
+  try{
+    const url = `https://api.github.com/repos/${cfg.owner}/${cfg.repo}/contents/${cfg.path}`;
+    const body = {
+      message: `Mise à jour timeline — ${new Date().toISOString().slice(0,16).replace('T',' ')}`,
+      content: utf8ToB64(JSON.stringify(cleanProjects, null, 2)),
+      branch: cfg.branch
+    };
+    if(currentSha) body.sha = currentSha;
+
+    const res = await fetch(url, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `Bearer ${cfg.token}`,
+        'Accept': 'application/vnd.github+json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(body)
+    });
+    if(!res.ok){
+      const errBody = await res.text();
+      throw new Error(`${res.status} ${res.statusText} — ${errBody}`);
+    }
+    const data = await res.json();
+    currentSha = data.content.sha;
+    showStatus("Publié avec succès sur GitHub. Le site se mettra à jour dans quelques instants (le temps que GitHub Pages reconstruise).", 'ok');
+  }catch(err){
+    console.error(err);
+    showStatus("Erreur de publication : " + err.message, 'err');
+  }
+});
+</script>
+
+</body>
+</html>

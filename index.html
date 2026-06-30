@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Arnaud Mathier — Parcours</title>
+<meta name="description" content="Timeline des projets d'Arnaud Mathier — branding, vidéo, dev & growth.">
+
+<!-- ============================================================
+     COMMENT EDITER TES PROJETS
+     Va tout en bas du fichier, section "DONNÉES DES PROJETS".
+     Chaque projet est un objet JS dans le tableau PROJECTS.
+     Le tri par date se fait automatiquement (le plus récent en haut).
+     ============================================================ -->
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Work+Sans:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --cream:#FAF6EC;
+    --cream-deep:#F3EDDD;
+    --navy:#1B3A53;
+    --magenta:#E91368;
+    --orange:#F2941B;
+    --blue:#3E86D6;
+    --green:#79B928;
+    --yellow:#F0C419;
+
+    --font-display:'Fredoka', sans-serif;
+    --font-body:'Work Sans', sans-serif;
+    --font-mono:'Space Mono', monospace;
+
+    --spine-w: 3px;
+    --wave: 22px;
+  }
+
+  *{box-sizing:border-box; margin:0; padding:0;}
+
+  html{scroll-behavior:smooth;}
+
+  body{
+    background:var(--cream);
+    color:var(--navy);
+    font-family:var(--font-body);
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+
+  ::selection{ background:var(--yellow); color:var(--navy); }
+
+  a{ color:inherit; }
+
+  /* ---------- focus visibility ---------- */
+  a:focus-visible, button:focus-visible, summary:focus-visible{
+    outline:3px solid var(--blue);
+    outline-offset:3px;
+    border-radius:4px;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration:0.01ms !important; animation-iteration-count:1 !important; transition-duration:0.01ms !important; scroll-behavior:auto !important; }
+  }
+
+  /* ================= HERO ================= */
+  .hero{
+    min-height:100svh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding:6vh 6vw 14vh;
+    position:relative;
+  }
+
+  .hero-eyebrow{
+    font-family:var(--font-mono);
+    letter-spacing:.35em;
+    text-transform:uppercase;
+    font-size:.72rem;
+    color:var(--orange);
+    margin-bottom:1.4rem;
+  }
+
+  .hero h1{
+    font-family:var(--font-display);
+    font-weight:700;
+    font-size:clamp(2.6rem, 8vw, 5.6rem);
+    line-height:1.02;
+    letter-spacing:-0.01em;
+  }
+
+  .hero h1 .accent-o{
+    display:inline-block;
+    width:.62em; height:.62em;
+    border-radius:50%;
+    border:.16em solid currentColor;
+    vertical-align:-0.06em;
+  }
+
+  .hero p.lede{
+    font-family:var(--font-body);
+    font-size:clamp(1rem, 2vw, 1.25rem);
+    max-width:36rem;
+    margin:1.6rem auto 0;
+    color:#43607a;
+  }
+
+  .hero .scroll-cue{
+    position:absolute;
+    bottom:6vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:.5rem;
+    font-family:var(--font-mono);
+    font-size:.7rem;
+    letter-spacing:.2em;
+    text-transform:uppercase;
+    color:var(--navy);
+    opacity:.55;
+  }
+  .scroll-cue .line{
+    width:1px; height:34px;
+    background:linear-gradient(var(--navy), transparent);
+    animation:cueMove 1.8s ease-in-out infinite;
+  }
+  @keyframes cueMove{
+    0%{ transform:scaleY(0.3); transform-origin:top; opacity:0.3;}
+    50%{ transform:scaleY(1); transform-origin:top; opacity:1;}
+    100%{ transform:scaleY(0.3); transform-origin:bottom; opacity:0.3;}
+  }
+
+  /* wavy divider — signature motif borrowed from the source DA */
+  .wave-divider{
+    width:100%;
+    height:var(--wave);
+    display:block;
+  }
+  .wave-divider svg{ width:100%; height:100%; display:block; }
+
+  /* ================= TIMELINE ================= */
+  .timeline-wrap{
+    position:relative;
+    max-width:1100px;
+    margin:0 auto;
+    padding: 4rem 1.25rem 10rem;
+  }
+
+  .spine{
+    position:absolute;
+    left:50%;
+    top:0;
+    bottom:0;
+    width:var(--spine-w);
+    background:repeating-linear-gradient(
+      to bottom,
+      var(--navy) 0 8px,
+      transparent 8px 16px
+    );
+    opacity:.35;
+    transform:translateX(-50%);
+  }
+  @media (max-width:780px){
+    .spine{ left:28px; }
+  }
+
+  .year-marker{
+    position:relative;
+    text-align:center;
+    margin: 3.5rem 0 1.5rem;
+  }
+  .year-marker span{
+    font-family:var(--font-display);
+    font-weight:600;
+    font-size:1.1rem;
+    background:var(--cream);
+    padding:.35rem 1.4rem;
+    border:2px solid var(--navy);
+    border-radius:999px;
+    position:relative;
+    z-index:2;
+    letter-spacing:.04em;
+  }
+  @media (max-width:780px){
+    .year-marker{ text-align:left; padding-left:0; }
+    .year-marker span{ margin-left:0; }
+  }
+
+  .entry{
+    display:grid;
+    grid-template-columns: 1fr 64px 1fr;
+    align-items:start;
+    gap:0 1.5rem;
+    margin-bottom:7rem;
+    opacity:0;
+    transform:translateY(28px);
+    transition:opacity .7s ease, transform .7s ease;
+
+    /* parallax stack: each entry sticks a little lower than the
+       previous one, so as you keep scrolling the next card rises
+       up and settles just below/behind the one before it along
+       the spine. --i is set inline by JS. */
+    position:sticky;
+    top: calc(96px + (var(--i, 0) * 16px));
+    z-index: calc(var(--i, 0) + 1);
+  }
+  .entry.in-view{ opacity:1; transform:translateY(0); }
+
+  .entry .card{
+    transition: box-shadow .35s ease, transform .35s ease;
+  }
+  /* once a card is pinned and the next one is rising over it,
+     give it a slightly receded, "stacked underneath" look */
+  .entry:not(:last-child) .card{
+    box-shadow:10px 10px 0 var(--ring-color, var(--magenta));
+  }
+
+  @media (max-width:780px){
+    .entry{ top: calc(72px + (var(--i, 0) * 10px)); margin-bottom:5rem; }
+  }
+
+  .entry .marker-col{
+    grid-column:2;
+    display:flex;
+    justify-content:center;
+    padding-top:.4rem;
+  }
+
+  .donut{
+    width:30px; height:30px;
+    border-radius:50%;
+    border: 8px solid var(--ring-color, var(--magenta));
+    background:var(--cream);
+    position:relative;
+    z-index:3;
+    box-shadow:0 0 0 6px var(--cream);
+    transition:transform .35s ease;
+  }
+  .entry.in-view .donut{ transform:scale(1.08); }
+
+  .card-col{ grid-column:1; }
+  .entry.right .card-col.left-slot{ visibility:hidden; }
+  .entry.right .card-col.right-slot{ grid-column:3; }
+  .entry.left .card-col.right-slot{ visibility:hidden; }
+  .entry.left .card-col.left-slot{ grid-column:1; }
+
+  /* mobile: single column, marker on left rail */
+  @media (max-width:780px){
+    .entry{
+      grid-template-columns: 56px 1fr;
+      gap:0 1rem;
+    }
+    .entry .marker-col{ grid-column:1; justify-content:flex-start; padding-left:4px; }
+    .entry .card-col.left-slot,
+    .entry .card-col.right-slot{
+      grid-column:2 !important;
+      visibility:visible !important;
+    }
+  }
+
+  .card{
+    background:#fff;
+    border:2px solid var(--navy);
+    border-radius:18px;
+    padding:1.3rem 1.4rem 1.1rem;
+    position:relative;
+    box-shadow:6px 6px 0 var(--ring-color, var(--magenta));
+  }
+
+  .card .date-tag{
+    font-family:var(--font-mono);
+    font-size:.72rem;
+    letter-spacing:.08em;
+    color:var(--ring-color, var(--magenta));
+    text-transform:uppercase;
+    display:flex;
+    align-items:center;
+    gap:.45rem;
+    margin-bottom:.45rem;
+  }
+  .card .date-tag .icon{
+    width:18px; height:18px;
+    flex:none;
+  }
+
+  .card h3{
+    font-family:var(--font-display);
+    font-weight:600;
+    font-size:1.18rem;
+    line-height:1.25;
+    margin-bottom:.3rem;
+  }
+
+  .card .client{
+    font-size:.85rem;
+    color:#5b7388;
+    margin-bottom:.7rem;
+  }
+
+  .card summary{
+    list-style:none;
+    cursor:pointer;
+    font-family:var(--font-mono);
+    font-size:.72rem;
+    letter-spacing:.1em;
+    text-transform:uppercase;
+    color:var(--navy);
+    display:inline-flex;
+    align-items:center;
+    gap:.4rem;
+    padding:.3rem 0;
+    user-select:none;
+  }
+  .card summary::-webkit-details-marker{ display:none; }
+  .card summary .chev{
+    width:10px; height:10px;
+    border-right:2px solid var(--navy);
+    border-bottom:2px solid var(--navy);
+    transform:rotate(45deg);
+    transition:transform .25s ease;
+    margin-top:-3px;
+  }
+  details[open] summary .chev{ transform:rotate(-135deg); margin-top:2px; }
+
+  .card .desc{
+    font-size:.92rem;
+    line-height:1.55;
+    color:#324b5e;
+    margin:.7rem 0 .9rem;
+  }
+
+  .card .photos{
+    display:flex;
+    gap:.5rem;
+    flex-wrap:wrap;
+    margin-bottom:.8rem;
+  }
+  .card .photos a{
+    width:64px; height:64px;
+    border-radius:10px;
+    overflow:hidden;
+    border:2px solid var(--navy);
+    display:block;
+  }
+  .card .photos img{
+    width:100%; height:100%; object-fit:cover; display:block;
+  }
+
+  .card .links a.cta{
+    display:inline-flex;
+    align-items:center;
+    gap:.4rem;
+    font-family:var(--font-mono);
+    font-size:.74rem;
+    letter-spacing:.05em;
+    text-transform:uppercase;
+    background:var(--navy);
+    color:var(--cream);
+    padding:.45rem .85rem;
+    border-radius:999px;
+    text-decoration:none;
+  }
+  .card .links a.cta:hover{ background:var(--ring-color, var(--magenta)); }
+
+  .tag-pill{
+    display:inline-block;
+    font-family:var(--font-mono);
+    font-size:.65rem;
+    letter-spacing:.07em;
+    text-transform:uppercase;
+    border:1.5px solid var(--ring-color, var(--magenta));
+    color:var(--ring-color, var(--magenta));
+    padding:.15rem .55rem;
+    border-radius:999px;
+    margin-bottom:.6rem;
+  }
+
+  /* ================= FOOTER ================= */
+  footer{
+    text-align:center;
+    padding:4rem 1.5rem 5rem;
+    font-family:var(--font-mono);
+    font-size:.78rem;
+    color:#5b7388;
+  }
+  footer a{ color:var(--navy); text-decoration:underline; text-underline-offset:3px;}
+
+  /* end-of-line cap on the spine */
+  .spine-end{
+    position:absolute;
+    left:50%;
+    transform:translateX(-50%);
+    bottom:-6px;
+    width:14px;height:14px;
+    border-radius:50%;
+    background:var(--navy);
+  }
+  @media (max-width:780px){ .spine-end{ left:28px; } }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="hero-eyebrow">Montreux · Vaud · Suisse</div>
+  <h1>Arnaud Mathier<br>parc<span class="accent-o"></span>urs</h1>
+  <p class="lede">Branding, vidéo, growth &amp; produits digitaux — un fil chronologique de mes projets, du plus récent au plus ancien.</p>
+  <div class="scroll-cue"><span>Scroll</span><span class="line"></span></div>
+</header>
+
+<div class="wave-divider" aria-hidden="true">
+  <svg viewBox="0 0 1200 24" preserveAspectRatio="none"><path d="M0 12 C 50 0, 100 24, 150 12 S 250 0, 300 12 S 400 24, 450 12 S 550 0, 600 12 S 700 24, 750 12 S 850 0, 900 12 S 1000 24, 1050 12 S 1150 0, 1200 12 L1200 24 L0 24 Z" fill="#1B3A53" opacity="0.08"/></svg>
+</div>
+
+<main class="timeline-wrap" id="timeline">
+  <div class="spine"></div>
+  <div class="spine-end"></div>
+  <!-- entries injected by JS -->
+</main>
+
+<footer>
+  <p>Construit avec une trame inspirée du système graphique "Urban Line Identity".<br>
+  Contact — <a href="mailto:contact@arnaudmathier.ch">contact@arnaudmathier.ch</a> · <a href="https://vimeo.com/arnaudmathier" target="_blank" rel="noopener">Portfolio vidéo</a></p>
+</footer>
+
+<script>
+/* ============================================================
+   PICTOGRAMMES — style line-art, trait uniforme, coins arrondis
+   (4 catégories : branding, video, dev, growth)
+   ============================================================ */
+const ICONS = {
+  branding: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.1 4.6 5 .6-3.7 3.5.9 5-4.3-2.4-4.3 2.4.9-5-3.7-3.5 5-.6L12 3Z"/></svg>`,
+  video: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="13" height="12" rx="2.5"/><path d="M16.5 10.2 21 7.5v9l-4.5-2.7"/></svg>`,
+  dev: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 8 4.5 12l4 4"/><path d="M15.5 8l4 4-4 4"/><path d="M13.2 6.5 10.8 17.5"/></svg>`,
+  growth: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17 9 11 13 14 21 6"/><path d="M21 11.5V6h-5.5"/></svg>`
+};
+
+const CATEGORY_LABEL = {
+  branding: 'Branding',
+  video: 'Vidéo',
+  dev: 'Dev / No-code',
+  growth: 'Growth / Outreach'
+};
+
+const PALETTE = ['#E91368','#F2941B','#3E86D6','#79B928','#F0C419'];
+
+/* ============================================================
+   DONNÉES DES PROJETS
+   — Les projets sont chargés depuis data/projects.json (modifiable
+     via admin.html, qui publie directement sur GitHub).
+   — FALLBACK_PROJECTS n'est utilisé que si le fichier JSON est
+     introuvable (ex: ouverture du fichier en double-clic, sans
+     serveur — le navigateur bloque alors les requêtes fetch locales).
+   — "date" au format "YYYY-MM" sert UNIQUEMENT au tri.
+   — "dateLabel" est ce qui s'affiche (ex: "Depuis 2025", "Mars 2024").
+   — "category" doit être l'une de: branding | video | dev | growth
+   ============================================================ */
+const DATA_URL = 'data/projects.json';
+
+const FALLBACK_PROJECTS = [
+  {
+    date: "2026-01", dateLabel: "2026 — en cours",
+    title: "Brevet Fédéral AI Business Specialist",
+    client: "Formation continue", category: "growth",
+    description: "Formation certifiante autour de l'intégration de l'IA dans les stratégies business, en parallèle de l'activité freelance.",
+    photos: [], link: ""
+  },
+  {
+    date: "2025-09", dateLabel: "Depuis sept. 2025",
+    title: "Cowrten — sculptures Corten",
+    client: "Co-fondation avec Jorge & Benoît Lange", category: "branding",
+    description: "Marque suisse de sculptures de vaches en acier Corten (gammes Poya, Fleurs, Papillons).",
+    photos: [], link: "https://cowrten.ch"
+  }
+];
+
+/* ============================================================
+   RENDU
+   ============================================================ */
+function fmtYear(dateStr){ return dateStr.slice(0,4); }
+
+async function loadProjects(){
+  try{
+    const res = await fetch(DATA_URL, { cache: 'no-store' });
+    if(!res.ok) throw new Error('json not found');
+    const data = await res.json();
+    if(Array.isArray(data) && data.length) return data;
+    throw new Error('empty json');
+  }catch(err){
+    console.warn('Chargement de data/projects.json impossible, utilisation des données de secours intégrées au fichier. (Normal si tu ouvres index.html en double-clic plutôt que via un serveur/GitHub Pages.)', err);
+    return FALLBACK_PROJECTS;
+  }
+}
+
+function buildTimeline(PROJECTS){
+  const wrap = document.getElementById('timeline');
+  wrap.querySelectorAll('.entry, .year-marker').forEach(n => n.remove());
+  const sorted = [...PROJECTS].sort((a,b)=> b.date.localeCompare(a.date));
+  const wrap = document.getElementById('timeline');
+  let lastYear = null;
+
+  sorted.forEach((p, i) => {
+    const year = fmtYear(p.date);
+    if(year !== lastYear){
+      const ym = document.createElement('div');
+      ym.className = 'year-marker';
+      ym.innerHTML = `<span>${year}</span>`;
+      wrap.appendChild(ym);
+      lastYear = year;
+    }
+
+    const color = PALETTE[i % PALETTE.length];
+    const side = i % 2 === 0 ? 'left' : 'right';
+    const icon = ICONS[p.category] || ICONS.dev;
+    const label = CATEGORY_LABEL[p.category] || p.category;
+
+    const photosHtml = (p.photos && p.photos.length)
+      ? `<div class="photos">${p.photos.map(src => `<a href="${src}" target="_blank" rel="noopener"><img src="${src}" alt="${p.title}" loading="lazy"></a>`).join('')}</div>`
+      : '';
+
+    const linkHtml = p.link
+      ? `<div class="links"><a class="cta" href="${p.link}" target="_blank" rel="noopener">Voir le projet →</a></div>`
+      : '';
+
+    const card = `
+      <div class="card" style="--ring-color:${color}">
+        <span class="tag-pill">${label}</span>
+        <div class="date-tag"><span class="icon">${icon}</span>${p.dateLabel}</div>
+        <h3>${p.title}</h3>
+        <div class="client">${p.client}</div>
+        <details>
+          <summary><span class="chev"></span> Détails</summary>
+          <div class="desc">${p.description}</div>
+          ${photosHtml}
+          ${linkHtml}
+        </details>
+      </div>`;
+
+    const entry = document.createElement('div');
+    entry.className = `entry ${side}`;
+    entry.style.setProperty('--i', Math.min(i, 8));
+    entry.innerHTML = `
+      <div class="card-col left-slot">${side === 'left' ? card : ''}</div>
+      <div class="marker-col"><div class="donut" style="--ring-color:${color}"></div></div>
+      <div class="card-col right-slot">${side === 'right' ? card : ''}</div>
+    `;
+    wrap.appendChild(entry);
+  });
+}
+
+(async function init(){
+  const projects = await loadProjects();
+  buildTimeline(projects);
+
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){ e.target.classList.add('in-view'); }
+    });
+  }, { threshold:.18 });
+
+  document.querySelectorAll('.entry').forEach(el => io.observe(el));
+})();
+</script>
+
+</body>
+</html>
