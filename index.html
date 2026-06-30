@@ -493,7 +493,6 @@ function buildTimeline(PROJECTS){
   const wrap = document.getElementById('timeline');
   wrap.querySelectorAll('.entry, .year-marker').forEach(n => n.remove());
   const sorted = [...PROJECTS].sort((a,b)=> b.date.localeCompare(a.date));
-  const wrap = document.getElementById('timeline');
   let lastYear = null;
 
   sorted.forEach((p, i) => {
