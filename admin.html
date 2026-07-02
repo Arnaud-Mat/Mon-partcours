@@ -112,6 +112,23 @@
       <button class="btn-primary" id="add-btn">+ Nouveau projet</button>
       <button class="btn-ghost" id="publish-btn">Publier sur GitHub</button>
     </div>
+
+    <fieldset style="max-width:46rem; background:#fff; border:2px solid var(--navy); border-radius:14px; padding:1rem 1.2rem 1.3rem; margin-bottom:2rem;">
+      <legend style="font-family:var(--font-mono);text-transform:uppercase;font-size:.72rem;letter-spacing:.08em;padding:0 .5rem;">Entête de page</legend>
+
+      <label style="display:block;font-size:.78rem;font-family:var(--font-mono);text-transform:uppercase;letter-spacing:.05em;margin:.7rem 0 .25rem;color:#324b5e;">Ligne d'accroche (sous-titre gris, lettres espacées)</label>
+      <input type="text" id="h-eyebrow" placeholder="Montreux · Vaud · Suisse" style="width:100%;padding:.55rem .7rem;border:1.5px solid #b9c6d2;border-radius:8px;font-family:var(--font-body);font-size:.92rem;background:#fcfbf6;">
+
+      <label style="display:block;font-size:.78rem;font-family:var(--font-mono);text-transform:uppercase;letter-spacing:.05em;margin:.7rem 0 .25rem;color:#324b5e;">Nom (grande typo bold — ex: Arnaud Mathier)</label>
+      <input type="text" id="h-name" placeholder="Arnaud Mathier" style="width:100%;padding:.55rem .7rem;border:1.5px solid #b9c6d2;border-radius:8px;font-family:var(--font-display);font-size:1.1rem;font-weight:700;background:#fcfbf6;">
+
+      <label style="display:block;font-size:.78rem;font-family:var(--font-mono);text-transform:uppercase;letter-spacing:.05em;margin:.7rem 0 .25rem;color:#324b5e;">Tagline (deuxième ligne du titre — le "o" devient un anneau)</label>
+      <input type="text" id="h-tagline" placeholder="parcours" style="width:100%;padding:.55rem .7rem;border:1.5px solid #b9c6d2;border-radius:8px;font-family:var(--font-display);font-size:1.1rem;font-weight:700;background:#fcfbf6;">
+
+      <label style="display:block;font-size:.78rem;font-family:var(--font-mono);text-transform:uppercase;letter-spacing:.05em;margin:.7rem 0 .25rem;color:#324b5e;">Description (sous le titre, texte centré)</label>
+      <textarea id="h-lede" rows="3" style="width:100%;padding:.55rem .7rem;border:1.5px solid #b9c6d2;border-radius:8px;font-family:var(--font-body);font-size:.92rem;background:#fcfbf6;resize:vertical;">Branding, vidéo, growth & produits digitaux — un fil chronologique de mes projets, du plus récent au plus ancien.</textarea>
+    </fieldset>
+
     <div id="list"></div>
   </div>
 
@@ -235,7 +252,18 @@ async function loadFromGitHub(){
     }
     const data = await res.json();
     currentSha = data.sha;
-    projects = JSON.parse(b64ToUtf8(data.content));
+    const parsed = JSON.parse(b64ToUtf8(data.content));
+    // support both old (array) and new (object) format
+    if(Array.isArray(parsed)){
+      projects = parsed;
+    } else {
+      projects = parsed.projects || [];
+      const h = parsed.hero || {};
+      document.getElementById('h-eyebrow').value = h.eyebrow || '';
+      document.getElementById('h-name').value    = h.name    || '';
+      document.getElementById('h-tagline').value = h.tagline || '';
+      document.getElementById('h-lede').value    = h.lede    || '';
+    }
     showStatus(`${projects.length} projet(s) chargé(s) depuis GitHub.`, 'ok');
     renderList();
     document.getElementById('editor').classList.remove('hidden');
@@ -311,6 +339,12 @@ document.getElementById('publish-btn').addEventListener('click', async ()=>{
     return;
   }
   const cleanProjects = projects.map(({_id, ...rest}) => rest);
+  const hero = {
+    eyebrow: document.getElementById('h-eyebrow').value.trim(),
+    name:    document.getElementById('h-name').value.trim(),
+    tagline: document.getElementById('h-tagline').value.trim(),
+    lede:    document.getElementById('h-lede').value.trim()
+  };
   const missingDates = cleanProjects.some(p => !p.date);
   if(missingDates && !confirm("Au moins un projet n'a pas de date de tri (AAAA-MM). Publier quand même ?")){
     return;
@@ -320,7 +354,7 @@ document.getElementById('publish-btn').addEventListener('click', async ()=>{
     const url = `https://api.github.com/repos/${cfg.owner}/${cfg.repo}/contents/${cfg.path}`;
     const body = {
       message: `Mise à jour timeline — ${new Date().toISOString().slice(0,16).replace('T',' ')}`,
-      content: utf8ToB64(JSON.stringify(cleanProjects, null, 2)),
+      content: utf8ToB64(JSON.stringify({ hero, projects: cleanProjects }, null, 2)),
       branch: cfg.branch
     };
     if(currentSha) body.sha = currentSha;

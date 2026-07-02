@@ -404,10 +404,10 @@
 </head>
 <body>
 
-<header class="hero">
-  <div class="hero-eyebrow">Montreux · Vaud · Suisse</div>
-  <h1>Arnaud Mathier<br>parc<span class="accent-o"></span>urs</h1>
-  <p class="lede">Branding, vidéo, growth &amp; produits digitaux — un fil chronologique de mes projets, du plus récent au plus ancien.</p>
+<header class="hero" id="hero">
+  <div class="hero-eyebrow" id="hero-eyebrow">Montreux · Vaud · Suisse</div>
+  <h1 id="hero-title">Arnaud Mathier<br>parc<span class="accent-o"></span>urs</h1>
+  <p class="lede" id="hero-lede">Branding, vidéo, growth &amp; produits digitaux — un fil chronologique de mes projets, du plus récent au plus ancien.</p>
   <div class="scroll-cue"><span>Scroll</span><span class="line"></span></div>
 </header>
 
@@ -484,16 +484,32 @@ const FALLBACK_PROJECTS = [
    ============================================================ */
 function fmtYear(dateStr){ return dateStr.slice(0,4); }
 
-async function loadProjects(){
+async function loadData(){
   try{
     const res = await fetch(DATA_URL, { cache: 'no-store' });
     if(!res.ok) throw new Error('json not found');
     const data = await res.json();
-    if(Array.isArray(data) && data.length) return data;
-    throw new Error('empty json');
+    // support both old (array) and new (object with hero+projects) format
+    if(Array.isArray(data)) return { hero: null, projects: data };
+    if(data.projects) return data;
+    throw new Error('format inconnu');
   }catch(err){
-    console.warn('Chargement de data/projects.json impossible, utilisation des données de secours intégrées au fichier. (Normal si tu ouvres index.html en double-clic plutôt que via un serveur/GitHub Pages.)', err);
-    return FALLBACK_PROJECTS;
+    console.warn('Fallback données intégrées.', err);
+    return { hero: null, projects: FALLBACK_PROJECTS };
+  }
+}
+
+function renderHero(hero){
+  if(!hero) return;
+  const eyebrow = document.getElementById('hero-eyebrow');
+  const title   = document.getElementById('hero-title');
+  const lede    = document.getElementById('hero-lede');
+  if(eyebrow) eyebrow.textContent = hero.eyebrow || '';
+  if(lede)    lede.textContent    = hero.lede    || '';
+  if(title && hero.name && hero.tagline){
+    // reconstruct: Name<br>tagline with accent-o on first "o"
+    const tagline = hero.tagline.replace(/o/i, '<span class="accent-o"></span>');
+    title.innerHTML = `${hero.name}<br>${tagline}`;
   }
 }
 
@@ -554,8 +570,9 @@ function buildTimeline(PROJECTS){
 }
 
 (async function init(){
-  const projects = await loadProjects();
-  buildTimeline(projects);
+  const data = await loadData();
+  renderHero(data.hero);
+  buildTimeline(data.projects);
 
   const io = new IntersectionObserver((entries)=>{
     entries.forEach(e=>{

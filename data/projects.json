@@ -1,82 +1,90 @@
-[
-  {
-    "date": "2026-01",
-    "dateLabel": "2026 — en cours",
-    "title": "Brevet Fédéral AI Business Specialist",
-    "client": "Formation continue",
-    "category": "growth",
-    "description": "Formation certifiante autour de l'intégration de l'IA dans les stratégies business, en parallèle de l'activité freelance.",
-    "photos": [],
-    "link": ""
+{
+  "hero": {
+    "eyebrow": "Montreux · Vaud · Suisse",
+    "name": "Arnaud Mathier",
+    "tagline": "parcours",
+    "lede": "Branding, vidéo, growth & produits digitaux — un fil chronologique de mes projets, du plus récent au plus ancien."
   },
-  {
-    "date": "2025-09",
-    "dateLabel": "Depuis sept. 2025",
-    "title": "Cowrten — sculptures Corten",
-    "client": "Co-fondation avec Jorge & Benoît Lange",
-    "category": "branding",
-    "description": "Marque suisse de sculptures de vaches en acier Corten (gammes Poya, Fleurs, Papillons). Identité, cold email B2B via Lemlist, configuration DNS/SPF/DKIM/DMARC, listings Ricardo.ch.",
-    "photos": [],
-    "link": "https://cowrten.ch"
-  },
-  {
-    "date": "2025-04",
-    "dateLabel": "Depuis avril 2025",
-    "title": "Musée Jack Preger",
-    "client": "Fondation Calcutta Espoir Suisse",
-    "category": "branding",
-    "description": "Mémorial pour le Dr Jack Preger (street medicine, Calcutta Rescue) à Aigle. Gestion de projet Notion, archive vidéo (1043 clips), campagnes de fundraising auprès de 1100 fondations romandes.",
-    "photos": [],
-    "link": "https://calcutta-espoir.ch"
-  },
-  {
-    "date": "2024-11",
-    "dateLabel": "Novembre 2024",
-    "title": "PhémeApp",
-    "client": "Projet personnel",
-    "category": "dev",
-    "description": "SaaS suisse envoyant des alertes automatiques lors de la publication de mises à l'enquête à proximité d'adresses surveillées dans le canton de Vaud. Stack Python, API CAMAC, SMTP Brevo.",
-    "photos": [],
-    "link": "https://phemeapp.ch"
-  },
-  {
-    "date": "2024-03",
-    "dateLabel": "2024",
-    "title": "Bikepart",
-    "client": "Projet personnel",
-    "category": "dev",
-    "description": "Site affilié pièces eMTB avec silhouette SVG interactive cliquable, intégration Awin, déployé sur Netlify.",
-    "photos": [],
-    "link": ""
-  },
-  {
-    "date": "2023-06",
-    "dateLabel": "2023",
-    "title": "Make Wallis Great Again",
-    "client": "Projet personnel",
-    "category": "branding",
-    "description": "MVP e-commerce de casquettes brodées via Printful/Etsy, ciblant les Valaisans. Identité visuelle, boutique Etsy, workspace Notion.",
-    "photos": [],
-    "link": ""
-  },
-  {
-    "date": "2021-01",
-    "dateLabel": "2021 — 2023",
-    "title": "Production vidéo freelance",
-    "client": "RTS, Ringier Axel Springer, Uber, BCGE",
-    "category": "video",
-    "description": "Production vidéo pour de grands clients médias et corporate suisses. Régisseur général sur une production Netflix (El Correo, scènes à Genève).",
-    "photos": [],
-    "link": "https://vimeo.com/arnaudmathier"
-  },
-  {
-    "date": "2014",
-    "dateLabel": "2014",
-    "title": "Tour du monde",
-    "client": "",
-    "category": "dev",
-    "description": "test test",
-    "photos": [],
-    "link": ""
-  }
-]
+  "projects": [
+    {
+      "date": "2026-01",
+      "dateLabel": "2026 — en cours",
+      "title": "Brevet Fédéral AI Business Specialist",
+      "client": "Formation continue",
+      "category": "growth",
+      "description": "Formation certifiante autour de l'intégration de l'IA dans les stratégies business, en parallèle de l'activité freelance.",
+      "photos": [],
+      "link": ""
+    },
+    {
+      "date": "2025-09",
+      "dateLabel": "Depuis sept. 2025",
+      "title": "Cowrten — sculptures Corten",
+      "client": "Co-fondation avec Jorge & Benoît Lange",
+      "category": "branding",
+      "description": "Marque suisse de sculptures de vaches en acier Corten (gammes Poya, Fleurs, Papillons). Identité, cold email B2B via Lemlist, configuration DNS/SPF/DKIM/DMARC, listings Ricardo.ch.",
+      "photos": [],
+      "link": "https://cowrten.ch"
+    },
+    {
+      "date": "2025-04",
+      "dateLabel": "Depuis avril 2025",
+      "title": "Musée Jack Preger",
+      "client": "Fondation Calcutta Espoir Suisse",
+      "category": "branding",
+      "description": "Mémorial pour le Dr Jack Preger (street medicine, Calcutta Rescue) à Aigle. Gestion de projet Notion, archive vidéo (1043 clips), campagnes de fundraising auprès de 1100 fondations romandes.",
+      "photos": [],
+      "link": "https://calcutta-espoir.ch"
+    },
+    {
+      "date": "2024-11",
+      "dateLabel": "Novembre 2024",
+      "title": "PhémeApp",
+      "client": "Projet personnel",
+      "category": "dev",
+      "description": "SaaS suisse envoyant des alertes automatiques lors de la publication de mises à l'enquête à proximité d'adresses surveillées dans le canton de Vaud. Stack Python, API CAMAC, SMTP Brevo.",
+      "photos": [],
+      "link": "https://phemeapp.ch"
+    },
+    {
+      "date": "2024-03",
+      "dateLabel": "2024",
+      "title": "Bikepart",
+      "client": "Projet personnel",
+      "category": "dev",
+      "description": "Site affilié pièces eMTB avec silhouette SVG interactive cliquable, intégration Awin, déployé sur Netlify.",
+      "photos": [],
+      "link": ""
+    },
+    {
+      "date": "2023-06",
+      "dateLabel": "2023",
+      "title": "Make Wallis Great Again",
+      "client": "Projet personnel",
+      "category": "branding",
+      "description": "MVP e-commerce de casquettes brodées via Printful/Etsy, ciblant les Valaisans. Identité visuelle, boutique Etsy, workspace Notion.",
+      "photos": [],
+      "link": ""
+    },
+    {
+      "date": "2021-01",
+      "dateLabel": "2021 — 2023",
+      "title": "Production vidéo freelance",
+      "client": "RTS, Ringier Axel Springer, Uber, BCGE",
+      "category": "video",
+      "description": "Production vidéo pour de grands clients médias et corporate suisses. Régisseur général sur une production Netflix (El Correo, scènes à Genève).",
+      "photos": [],
+      "link": "https://vimeo.com/arnaudmathier"
+    },
+    {
+      "date": "2014",
+      "dateLabel": "2014",
+      "title": "Tour du monde",
+      "client": "",
+      "category": "dev",
+      "description": "test test",
+      "photos": [],
+      "link": ""
+    }
+  ]
+}
